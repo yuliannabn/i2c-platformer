@@ -13,4 +13,4 @@ The master requests joystick data from the slave to control the player.
 
 ## Demo
 
-[![Demo](https://img.youtube.com/vi/ijTg4G4QMKo/1.jpg)](https://youtu.be/ijTg4G4QMKo)
+![Demo](assets/demo.gif)
