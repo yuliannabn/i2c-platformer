@@ -44,11 +44,13 @@ void generate_tile(int index, int row)
 	switch (row) {
 		case TOP:
 		{
-			bool make_tile = (!has_surrounding_obstacles(index, BOTTOM)) && (random(200) % 2 == 0);
+			bool make_tile = (!has_surrounding_obstacles(index, BOTTOM)) && (random(2) % 2 == 0);
 			frame_map[TOP][index] = (make_tile) ? OBSTACLE : EMPTY;
+			break;
 		}
 		case BOTTOM:
-			frame_map[BOTTOM][index] = (random(200) % 6 == 0) ? OBSTACLE : EMPTY;
+			frame_map[BOTTOM][index] = (random(200) % 5 == 0) ? OBSTACLE : EMPTY;
+			break;
 		default:
 			break;
 	}
@@ -89,9 +91,9 @@ void display_map_frame() {
 	map_curr++;
 }
 
-int display_player_frame(int y_val) {
+float display_player_frame(int y_val) {
 	int y_pos = (y_val > AXIS_NEUTRAL);
-	static int score = 1;
+	static float score = 1;
 
 	lcd.setCursor(PLAYER_X_POS, y_pos);
 	if (display_frame[y_pos][PLAYER_X_POS] == OBSTACLE) {
@@ -99,11 +101,11 @@ int display_player_frame(int y_val) {
 		lcd.print("___ you lost ___");
 		lcd.setCursor(1, 3);
 		lcd.print("score: ");
-		lcd.print(score);
+		lcd.print((int)score);
 		score = 0;
 		delay(1000);
 	}
-	score++;
+	score += 1.7;
 	lcd.write(PLAYER);
 	return (score);
 }
@@ -122,6 +124,8 @@ void setup() {
 
 void loop() {
 	joystick_t data { 0, 0, false };
+	float score = 0;
+
 	lcd.clear();
 
 	delay(20);
@@ -136,7 +140,9 @@ void loop() {
 	if (Wire.available() == sizeof(data)) {
 		Wire.readBytes((uint8_t*)&data, sizeof(data));
 		display_map_frame();
-		display_player_frame(data.y);
+		score = display_player_frame(data.y);
 	}
-	delay(300);
+	if (score >= 500)
+		score = 499;
+	delay(500 - score);
 }
